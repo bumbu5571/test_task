@@ -7,16 +7,17 @@ import styled from "styled-components";
 const HistoricalEventsConteiner = styled.div`
   width: 90em;
   margin: 0 auto;
+  position: relative;
 `;
 
 export default function HistoricalEvents() {
   return (
     <HistoricalEventsConteiner>
-      <TimelineHeader></TimelineHeader>
-      <TimePeriodSelector></TimePeriodSelector>
-      <EventDetailsSlider></EventDetailsSlider>
-      <Line></Line>
-      <Line></Line>
+      <TimelineHeader />
+      <TimePeriodSelector />
+      <EventDetailsSlider />
+      <Line />
+      <Line rotate={90} />
     </HistoricalEventsConteiner>
   )
 }

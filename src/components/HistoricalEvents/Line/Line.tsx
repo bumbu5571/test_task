@@ -1,7 +1,21 @@
+import styled from "styled-components";
 
+export const StyledLine = styled.div<TypeLine>`
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  height: 1px;
+  background-color: #42567A;
+  opacity: 10%;
+  transform: rotate(${({ rotate }) => rotate || 0}deg);
+`;
 
-export default function Line() {
+type TypeLine = {
+  rotate?: number;
+}
+
+export default function Line({rotate = 0}: TypeLine) {
   return (
-    <div></div>
+    <StyledLine rotate={rotate} />
   )
 }
