@@ -9,8 +9,14 @@ import { HistoricalEventsArray } from "src/lib/types";
 
 const StyledHistoricalEvents = styled.div`
   width: 90em;
-  margin: 0 auto;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 0 auto;
+  overflow: hidden;
+  border-left: 1px solid var(--border-opacity);
+  border-right: 1px solid var(--border-opacity);
 `;
 
 export default function HistoricalEvents() {

@@ -8,6 +8,7 @@ const GlobalStyle = createGlobalStyle`
     --gradient-second: #EF5DA8;
     --date-start: #5d5deb;
     --date-end: #ec5fad;
+    --border-opacity: rgba(66, 86, 122, .1);
   }
 
   * {

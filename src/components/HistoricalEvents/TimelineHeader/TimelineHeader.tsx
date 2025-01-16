@@ -2,10 +2,11 @@ import styled from "styled-components";
 
 const StyledTimelineHeader = styled.header`
   position: absolute;
-  top: 177px;
   display: flex;
   gap: 78px;
   align-items: center;
+  align-self: start;
+  margin-top: 177px;
 `;
 
 const StyledHeaderGradient = styled.div`

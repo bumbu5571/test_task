@@ -12,8 +12,8 @@ type TypeStyledDate = {
 
 const StyledCircle = styled.div`
   position: relative;
-  left: 455px;
-  top: 215px;
+  margin-top: 215px;
+  margin-bottom: 96px;
   width: 530px;
   height: 530px;
   border: 1px solid var(--contrastText);
@@ -85,9 +85,9 @@ export default function TimePeriodSelector({numEvents, startEvents, endEvents}: 
       <StyledCircle ref={refStyledCircle}>
         {points}
         <StyledEventsDate>
-        <StyledDate position={"start"} >{startEvents}</StyledDate>
-        <StyledDate position={"end"}>{endEvents}</StyledDate>
-      </StyledEventsDate>
+          <StyledDate position={"start"} >{startEvents}</StyledDate>
+          <StyledDate position={"end"}>{endEvents}</StyledDate>
+        </StyledEventsDate>
       </StyledCircle>
     </>
     

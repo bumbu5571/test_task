@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 export const StyledLine = styled.div<TypeLine>`
   position: absolute;
-  top: 50%;
+  top: 480px;
   width: 100%;
   height: 1px;
   background-color: var(--contrastText);

@@ -1,7 +1,8 @@
+import CardHistoricalEvents from "./CardHistoricalEvents";
 
 
 export default function EventDetailsSlider() {
   return (
-    <div>EventDetailsSlider</div>
+    <CardHistoricalEvents></CardHistoricalEvents>
   )
 }
