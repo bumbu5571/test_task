@@ -4,7 +4,7 @@ import TimelineHeader from "./TimelineHeader/TimelineHeader";
 import TimePeriodSelector from "./TimePeriodSelector/TimePeriodSelector";
 import styled from "styled-components";
 
-const HistoricalEventsConteiner = styled.div`
+const StyledHistoricalEvents = styled.div`
   width: 90em;
   margin: 0 auto;
   position: relative;
@@ -12,12 +12,12 @@ const HistoricalEventsConteiner = styled.div`
 
 export default function HistoricalEvents() {
   return (
-    <HistoricalEventsConteiner>
+    <StyledHistoricalEvents>
       <TimelineHeader />
       <TimePeriodSelector />
       <EventDetailsSlider />
       <Line />
       <Line rotate={90} />
-    </HistoricalEventsConteiner>
+    </StyledHistoricalEvents>
   )
 }

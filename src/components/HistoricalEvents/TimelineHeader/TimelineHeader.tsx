@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-const TimelineHeaderConteiner = styled.header`
+const StyledTimelineHeader = styled.header`
   position: absolute;
   top: 177px;
   display: flex;
@@ -8,26 +8,29 @@ const TimelineHeaderConteiner = styled.header`
   align-items: center;
 `;
 
-const LinearGradient = styled.div`
+const StyledHeaderGradient = styled.div`
   height: 120px;
   width: 5px;
-  background: linear-gradient(#3877EE,#EF5DA8);
+  background: linear-gradient(
+    var(--gradient-first),
+    var(--gradient-second)
+  );
 `
 
-const TimelineHeaderText = styled.div`
+const StyledHeaderText = styled.div`
   font-size: 56px;
   font-weight: 700;
   line-height: 67.2px;
-  color: #42567A;
+  color: var(--contrastText);
 `;
 
 export default function TimelineHeader() {
   
   return (
-    <TimelineHeaderConteiner>
-      <LinearGradient />
-      <TimelineHeaderText>Исторические<br/> даты</TimelineHeaderText>
-    </TimelineHeaderConteiner>
+    <StyledTimelineHeader>
+      <StyledHeaderGradient />
+      <StyledHeaderText>Исторические<br/> даты</StyledHeaderText>
+    </StyledTimelineHeader>
     
   )
 }
