@@ -8,14 +8,14 @@ export const historicalEventsData: Array<HistoricalEventsArray> = [
       "description": "Изобретение бензинового автомобиля, Германия (Карл Бенц)"
     },
     {
-      "category": "Наука",
-      "date": 1928,
-      "description": "Открытие пенициллина, Шотландия (Александр Флеминг)"
-    },
-    {
       "category": "Космос",
       "date": 1957,
       "description": "Запуск первого искусственного спутника Земли 'Спутник-1', СССР"
+    },
+    {
+      "category": "Наука",
+      "date": 1928,
+      "description": "Открытие пенициллина, Шотландия (Александр Флеминг)"
     },
     {
       "category": "Музыка",
