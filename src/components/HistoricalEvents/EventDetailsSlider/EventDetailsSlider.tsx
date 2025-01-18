@@ -9,8 +9,10 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 
 import Arrow from '@/assets/arrow_right.svg'
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { Swiper as TypeSwiper } from 'swiper/types';
+import { IStyledComponentBase, Substitute } from 'styled-components/dist/types';
+import { historicalEventsData } from '@/lib/data';
 
 const StyledCardHeader = styled.header`
   font-size: 25px;
@@ -19,7 +21,7 @@ const StyledCardHeader = styled.header`
   color: var(--gradient-first)
 `;
 
-const StyledTextHeader = styled.p`
+const StyledCardText = styled.p`
   margin: 15px 0 0 0;
   font-size: 20px;
   font-weight: 400;
@@ -29,7 +31,7 @@ const StyledTextHeader = styled.p`
   overflow: hidden; 
 `;
 
-const StyledWrapper = styled.div`
+const StyledWrapperSwiper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -39,32 +41,81 @@ const StyledWrapper = styled.div`
   margin-bottom: 104px;
 `;
 
-type TypeStyledButtonSwiper = {
-  $position: string;
-};
-
 const StyledButtonSwiper = styled.div<TypeStyledButtonSwiper>`
   position: absolute;
   ${({$position}) => $position === "left" ?
     `left: 20px; transform: rotate(180deg)`
     : `right:20px`};
   width: 40px;
-  height: 40px;
+  height: 40px ;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px 0 var(--arrow);
+  box-shadow: 0 0 15px 0 var(--arrow-swiper);
 `;
+
+const StyledEvents = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: end;
+  position: absolute;
+  left: 0;
+  top: -144px;
+  width: 120px;
+  height: 88px;
+  margin-left: 80px;
+`;
+
+const StyledWrapperButtonEvents = styled.div`
+  display: flex;
+  gap: 20px;
+`;
+
+const StyledButtonEvents = styled.div<TypeStyledButtonSwiper >`
+  ${({$position}) => $position === "left" ?
+    `left: 20px; transform: rotate(180deg)`
+    : `right:20px`};
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 1px solid var(--arrow-hidden);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+const StyledTextEventsPosition = styled.p`
+  position: absolute;
+  left: 0;
+  top: 0;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 18.12px;
+  color: var(--arrow-view);
+  align-self: self-start;
+`;
+
+interface TypeStyledButtonSwiper {
+  $position: string;
+};
 
 type TypeEventDetailsSlider = {
   events: HistoricalEventsArray;
+  setEvents: React.Dispatch<React.SetStateAction<HistoricalEventsArray>>;
+  activeEvents: number;
+  setActiveEvents: React.Dispatch<React.SetStateAction<number>>;
+  sortByEvent: (array: HistoricalEventsArray) => HistoricalEventsArray;
 };
 
-export default function EventDetailsSlider({events}: TypeEventDetailsSlider) {
-  const swiperRef = useRef(null);
-  const buttonNextRef = useRef(null);
-  const buttonPrevRef = useRef(null);
+export default function EventDetailsSlider({events, setEvents, activeEvents, setActiveEvents, sortByEvent}: TypeEventDetailsSlider) {
+  const swiperRef = useRef<TypeSwiper>(null);
+  const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
+  const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
+  const [isEventsEnd, setIsEventsEnd] = useState<boolean>(false)
+  const [isEventsStart, setIsEventsStart] = useState<boolean>(true)
 
   const slideNext = () => {
     swiperRef.current.slideNext();
@@ -78,23 +129,69 @@ export default function EventDetailsSlider({events}: TypeEventDetailsSlider) {
     swiperRef.current = swiper;
 
     swiper.on("reachEnd", () => {
-      buttonNextRef.current.classList.add("hidden");
+      buttonSwiperNextRef.current.classList.add("hidden");
     });
 
     swiper.on("reachBeginning", () => {
-      buttonPrevRef.current.classList.add("hidden");
+      buttonSwiperPrevRef.current.classList.add("hidden");
     });
 
     swiper.on("fromEdge", () => {
-      if (!swiperRef.current.isEnd) buttonNextRef.current.classList.remove("hidden");
+      if (!swiperRef.current.isEnd) buttonSwiperNextRef.current.classList.remove("hidden");
 
-      if (!swiperRef.current.isBeginning) buttonPrevRef.current.classList.remove("hidden");
+      if (!swiperRef.current.isBeginning) buttonSwiperPrevRef.current.classList.remove("hidden");
     });
-    
+  };
+
+  const handleClickNext = () => {
+    if ( activeEvents === (events.length - 2) ) {
+      setIsEventsEnd((prev) => !prev)
+    }
+    if (activeEvents < 5) {
+      if (isEventsStart) setIsEventsStart((prev) => !prev);
+      const num = activeEvents + 1;
+      setActiveEvents(num);
+      setEvents(sortByEvent(historicalEventsData[num]))
+    };
+    return;
+  };
+
+  const handleClickPrev = () => {
+    if ( activeEvents === 1 ) {
+      setIsEventsStart((prev) => !prev)
+    }
+
+    if (activeEvents > 0) {
+      if (isEventsEnd) setIsEventsEnd((prev) => !prev);
+      const num = activeEvents - 1;
+      setActiveEvents(num);
+      setEvents(sortByEvent(historicalEventsData[num]))
+    };
+    return;
   };
 
   return (
-    <StyledWrapper>
+    <StyledWrapperSwiper>
+      <StyledEvents>
+        <StyledTextEventsPosition>{`0${activeEvents + 1}/0${events.length}`}</StyledTextEventsPosition>
+        <StyledWrapperButtonEvents>
+          <StyledButtonEvents
+            onClick={handleClickPrev}
+            $position={"left"}
+            className={isEventsStart ?"color_border_hidden" : "color_border_view"} >
+              <Arrow width={6.25}
+              height={12.5}
+              className={isEventsStart ? "color_arrow_hidden": "color_arrow_view"} />
+          </StyledButtonEvents>
+          <StyledButtonEvents
+            onClick={handleClickNext}
+            $position={"right"}
+            className={isEventsEnd ? "color_border_hidden" : "color_border_view"}>
+              <Arrow width={6.25} height={12.5} className={isEventsEnd ? "color_arrow_hidden" : "color_arrow_view"} />
+          </StyledButtonEvents>
+        </StyledWrapperButtonEvents>
+      </StyledEvents>
+      
       <Swiper
       onSwiper={handleSwiper}
       modules={[Navigation]}
@@ -108,15 +205,15 @@ export default function EventDetailsSlider({events}: TypeEventDetailsSlider) {
         {events.map((event) => 
         <SwiperSlide key={event.date} >
           <StyledCardHeader>{event.date}</StyledCardHeader>
-          <StyledTextHeader>{event.description}</StyledTextHeader>
+          <StyledCardText>{event.description}</StyledCardText>
         </SwiperSlide>)}
       </Swiper>
-      <StyledButtonSwiper className='hidden' ref={buttonPrevRef} onClick={slidePrev} $position={"left"}>
-        <Arrow width={5} height={10} />
+      <StyledButtonSwiper className='hidden' ref={buttonSwiperPrevRef} onClick={slidePrev} $position={"left"} >
+        <Arrow width={5} height={10} className={"color_arrow_swiper"}/>
       </StyledButtonSwiper>
-      <StyledButtonSwiper ref={buttonNextRef} onClick={slideNext} $position={"right"}>
-        <Arrow width={5} height={10} />
+      <StyledButtonSwiper ref={buttonSwiperNextRef} onClick={slideNext} $position={"right"} >
+        <Arrow width={5} height={10} className={"color_arrow_swiper"} />
       </StyledButtonSwiper>
-    </StyledWrapper>
+    </StyledWrapperSwiper>
   )
 }

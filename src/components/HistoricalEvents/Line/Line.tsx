@@ -5,7 +5,7 @@ export const StyledLine = styled.div<TypeLine>`
   top: 480px;
   width: 100%;
   height: 1px;
-  background-color: var(--contrastText);
+  background-color: var(--border-opacity);
   opacity: 100%;
   transform: rotate(${({ rotate }) => rotate || 0}deg);
 `;
