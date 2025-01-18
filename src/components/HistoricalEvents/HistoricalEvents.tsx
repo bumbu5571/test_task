@@ -4,8 +4,8 @@ import Line from "./Line/Line";
 import TimelineHeader from "./TimelineHeader/TimelineHeader";
 import TimePeriodSelector from "./TimePeriodSelector/TimePeriodSelector";
 import styled from "styled-components";
-import { historicalEventsData } from "src/lib/data";
-import { HistoricalEventsArray } from "src/lib/types";
+import { historicalEventsData } from "@/lib/data";
+import { HistoricalEventsArray } from "@/lib/types";
 
 const StyledHistoricalEvents = styled.div`
   width: 90em;
@@ -36,7 +36,7 @@ export default function HistoricalEvents() {
     <StyledHistoricalEvents>
       <TimelineHeader />
       <TimePeriodSelector numEvents={numEvents} startEvents={startEvents} endEvents={endEvents} />
-      <EventDetailsSlider />
+      <EventDetailsSlider events={events} />
       <Line />
       <Line rotate={90} />
     </StyledHistoricalEvents>

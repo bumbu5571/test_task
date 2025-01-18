@@ -7,7 +7,7 @@ type TypeStyledPoint = {
 }
 
 type TypeStyledDate = {
-  position: string;
+  $position: string;
 }
 
 const StyledCircle = styled.div`
@@ -51,7 +51,7 @@ const StyledDate = styled.div<TypeStyledDate>`
   line-height: 160px;
   letter-spacing: -.5px;
   color: var(
-  ${({position}) => (position === "start" ? "--date-start" : "--date-end" )}
+  ${({$position}) => ($position === "start" ? "--date-start" : "--date-end" )}
 );
 `;
 
@@ -85,8 +85,8 @@ export default function TimePeriodSelector({numEvents, startEvents, endEvents}: 
       <StyledCircle ref={refStyledCircle}>
         {points}
         <StyledEventsDate>
-          <StyledDate position={"start"} >{startEvents}</StyledDate>
-          <StyledDate position={"end"}>{endEvents}</StyledDate>
+          <StyledDate $position={"start"} >{startEvents}</StyledDate>
+          <StyledDate $position={"end"}>{endEvents}</StyledDate>
         </StyledEventsDate>
       </StyledCircle>
     </>

@@ -5,7 +5,7 @@ export const historicalEventsData: Array<HistoricalEventsArray> = [
     {
       "category": "Изобретение",
       "date": 1886,
-      "description": "Изобретение бензинового автомобиля, Германия (Карл Бенц)"
+      "description": "Изобретение бензинового автомобиля, Германия (КарлБенц)"
     },
     {
       "category": "Космос",
