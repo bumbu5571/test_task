@@ -24,23 +24,26 @@ export default function HistoricalEvents() {
     const newArray = [...array]
     return newArray.sort((a, b) => a.date - b.date)
   };
-  const [activeEvents, setActiveEvents] = useState<number>(0)
-  const [events, setEvents] = useState<HistoricalEventsArray>(sortByEvent(historicalEventsData[activeEvents]))
-  const numEvents: number = historicalEventsData.length;
+
+  const [activeEvents, setActiveEvents] = useState<number>(0);
+  const [events, setEvents] = useState<HistoricalEventsArray>(sortByEvent(historicalEventsData[activeEvents]));
   
+  
+  const eventsLenght: number = historicalEventsData.length;
   const startEvents: number = events[0].date;
   const endEvents: number = events[events.length - 1].date;
-
+ 
   return (
     <StyledHistoricalEvents>
       <TimelineHeader />
-      <TimePeriodSelector numEvents={numEvents} startEvents={startEvents} endEvents={endEvents} />
+      <TimePeriodSelector events={events} startEvents={startEvents} endEvents={endEvents} />
       <EventDetailsSlider
         events={events}
         setEvents={setEvents}
         activeEvents={activeEvents}
         setActiveEvents={setActiveEvents}
-        sortByEvent={sortByEvent}/>
+        sortByEvent={sortByEvent}
+        />
       <Line />
       <Line rotate={90} />
     </StyledHistoricalEvents>

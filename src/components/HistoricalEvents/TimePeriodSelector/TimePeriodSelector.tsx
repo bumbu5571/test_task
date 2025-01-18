@@ -1,4 +1,5 @@
-import { useLayoutEffect, useRef, useState } from "react";
+import { HistoricalEventsArray } from "@/lib/types";
+import { JSX, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 type TypeStyledPoint = {
@@ -7,7 +8,7 @@ type TypeStyledPoint = {
 }
 
 type TypeStyledDate = {
-  $position: string;
+  $position: "start" | "end";
 }
 
 const StyledCircle = styled.div`
@@ -52,41 +53,82 @@ const StyledDate = styled.div<TypeStyledDate>`
   letter-spacing: -.5px;
   color: var(
   ${({$position}) => ($position === "start" ? "--date-start" : "--date-end" )}
-);
+  );
 `;
 
 type TypeTimePeriodSelector = {
-  numEvents: number;
+  events: HistoricalEventsArray;
   startEvents: number;
   endEvents: number;
 };
 
-export default function TimePeriodSelector({numEvents, startEvents, endEvents}: TypeTimePeriodSelector) {
-  const angle = 360 / numEvents;
-  const points = [];
+export default function TimePeriodSelector({events, startEvents, endEvents}: TypeTimePeriodSelector) {
+  const angle: number = 360 / events.length;
+  const points = useRef<JSX.Element[]>([]);
   const refStyledCircle = useRef<HTMLDivElement>(null);
   const [radiusCicle, setRadiusCicle] = useState<number>(0);
 
-  useLayoutEffect(() => {
+  const [prevStartEvents,setPrevStartEvents] = useState(events[0].date);
+  const [prevEndEvents,setPrevEndEvents] = useState(events[events.length - 1].date);
+  
+  useEffect(() => {
     if(refStyledCircle.current) {
       const { width } = getComputedStyle(refStyledCircle.current)
       setRadiusCicle(parseInt(width)/2);
     }
   },[])
 
-  for(let i = 0; i < numEvents; i += 1) {
-    points.push(
-      <StyledPoint key={i} rotate={i * angle} radius={radiusCicle} />
-    )
-  }
+  useEffect(() => {
+    let timeRef: NodeJS.Timeout | null = null;
+
+
+    const updateValue = () => {
+      const newStart = prevStartEvents;
+      const newEnd = prevEndEvents;
+
+
+        if (startEvents > newStart) {
+        setTimeout(() => setPrevStartEvents((prev) => prev + 1 ), 33);
+      }
+      else if(startEvents < newStart) {
+        setTimeout(() => setPrevStartEvents((prev) => prev - 1 ), 33);
+      }
+
+
+      if (endEvents > newEnd) {
+        setTimeout(() => setPrevEndEvents((prev) => prev + 1 ), 33);
+      }
+      else if(endEvents < newEnd) {
+        setTimeout(() => setPrevEndEvents((prev) => prev - 1 ), 33);
+      }
+     
+      if (timeRef) {
+        clearTimeout(timeRef);
+      }
+    }
+
+
+    updateValue();
+
+
+    return () => {
+      if (timeRef) clearTimeout(timeRef);
+    }
+
+
+  },[prevStartEvents,prevEndEvents,startEvents, endEvents])
+
+  points.current = events.map((_, i) => (
+    <StyledPoint key={i} rotate={i * angle} radius={radiusCicle} />
+  ));
 
   return (
     <>
       <StyledCircle ref={refStyledCircle}>
-        {points}
+        {points.current}
         <StyledEventsDate>
-          <StyledDate $position={"start"} >{startEvents}</StyledDate>
-          <StyledDate $position={"end"}>{endEvents}</StyledDate>
+          <StyledDate $position={"start"} className="start_date" >{prevStartEvents}</StyledDate>
+          <StyledDate $position={"end"} className="end_date">{prevEndEvents}</StyledDate>
         </StyledEventsDate>
       </StyledCircle>
     </>

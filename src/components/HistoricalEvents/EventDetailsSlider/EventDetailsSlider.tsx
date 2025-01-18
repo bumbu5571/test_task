@@ -110,7 +110,15 @@ type TypeEventDetailsSlider = {
   sortByEvent: (array: HistoricalEventsArray) => HistoricalEventsArray;
 };
 
-export default function EventDetailsSlider({events, setEvents, activeEvents, setActiveEvents, sortByEvent}: TypeEventDetailsSlider) {
+export default function EventDetailsSlider(
+  {
+    events,
+    setEvents,
+    activeEvents,
+    setActiveEvents,
+    sortByEvent,
+  }: TypeEventDetailsSlider
+) {
   const swiperRef = useRef<TypeSwiper>(null);
   const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
   const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
