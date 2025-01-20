@@ -41,18 +41,18 @@ export default function EventsDate({dateStartEvents, dateEndEvents}: TypeEventsD
     const updateValue = () => {
 
         if (dateStartEvents > dateStart) {
-        setTimeout(() => setDateStart((prev) => prev + 1), 30);
+        setTimeout(() => setDateStart((prev) => prev + 1), 16);
       }
       else if(dateStartEvents < dateStart) {
-        setTimeout(() => setDateStart((prev) => prev - 1), 30);
+        setTimeout(() => setDateStart((prev) => prev - 1), 16);
       }
 
 
       if (dateEndEvents > dateEnd) {
-        setTimeout(() => setDateEnd((prev) => prev + 1), 30);
+        setTimeout(() => setDateEnd((prev) => prev + 1), 16);
       }
       else if(dateEndEvents < dateEnd) {
-        setTimeout(() => setDateEnd((prev) => prev - 1), 30);
+        setTimeout(() => setDateEnd((prev) => prev - 1), 16);
       }
      
       if (timeRef) {

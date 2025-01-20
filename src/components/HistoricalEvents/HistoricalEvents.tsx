@@ -31,18 +31,33 @@ export default function HistoricalEvents() {
   
   const dateStartEvents: number = events[0].date;
   const dateEndEvents: number = events[events.length - 1].date;
+  const angle = 360 / events.length;
 
+  const [isAnimation, setIsAnimation] = useState(false);
+  
   return (
     <StyledHistoricalEvents>
       <TimelineHeader />
       <EventsDate dateStartEvents={dateStartEvents} dateEndEvents={dateEndEvents} />
-      <TimePeriodSelector eventsLenght={events.length} />
+      <TimePeriodSelector
+        eventsLength={events.length}
+        isAnimation={isAnimation}
+        setIsAnimation={setIsAnimation}
+        activeEvents={activeEvents}
+        setActiveEvents={setActiveEvents}
+        setEvents={setEvents}
+        sortByEvent={sortByEvent}
+        angle={angle}
+        />
       <EventDetailsSlider
         events={events}
         setEvents={setEvents}
         activeEvents={activeEvents}
         setActiveEvents={setActiveEvents}
         sortByEvent={sortByEvent}
+        isAnimation={isAnimation}
+        setIsAnimation={setIsAnimation}
+        angle={angle}
         />
       <Line />
       <Line rotate={90} />

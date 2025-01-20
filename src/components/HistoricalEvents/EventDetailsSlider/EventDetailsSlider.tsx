@@ -9,7 +9,7 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 
 import Arrow from '@/assets/arrow_right.svg'
-import { memo, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { Swiper as TypeSwiper } from 'swiper/types';
 import { historicalEventsData } from '@/lib/data';
 import gsap from 'gsap';
@@ -109,27 +109,31 @@ type TypeEventDetailsSlider = {
   activeEvents: number;
   setActiveEvents: React.Dispatch<React.SetStateAction<number>>;
   sortByEvent: (array: HistoricalEventsArray) => HistoricalEventsArray;
+  isAnimation: boolean;
+  setIsAnimation: React.Dispatch<React.SetStateAction<boolean>>;
+  angle: number;
 };
 
-const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
+export default function EventDetailsSlider(
   {
     events,
     setEvents,
     activeEvents,
     setActiveEvents,
     sortByEvent,
+    isAnimation,
+    setIsAnimation,
+    angle
   }: TypeEventDetailsSlider
 ) {
   const swiperRef = useRef<TypeSwiper>(null);
   const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
   const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
+  const [startSwiperList, setStartSwiperList] = useState<boolean>(true);
+  const [endSwiperList, setEndSwiperList] = useState<boolean>(false);
 
-  const [isEventsEnd, setIsEventsEnd] = useState<boolean>(false)
-  const [isEventsStart, setIsEventsStart] = useState<boolean>(true)
-
-  const angle = 360 / events.length;
-
-  const [isAnimation, setIsAnimation] = useState(false);
+  const [isEventsEnd, setIsEventsEnd] = useState<boolean>(false);
+  const [isEventsStart, setIsEventsStart] = useState<boolean>(true);
 
   const slideNext = () => {
     swiperRef.current.slideNext();
@@ -143,17 +147,16 @@ const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
     swiperRef.current = swiper;
 
   swiper.on("reachEnd", () => {
-    buttonSwiperNextRef.current.classList.add("hidden_arrow_swiper");
+    setEndSwiperList((prev) => !prev);
   });
 
   swiper.on("reachBeginning", () => {
-    buttonSwiperPrevRef.current.classList.add("hidden_arrow_swiper");
+    setStartSwiperList((prev) => !prev);
   });
 
   swiper.on("fromEdge", () => {
-    if (!swiperRef.current.isEnd) buttonSwiperNextRef.current.classList.remove("hidden_arrow_swiper");
-
-    if (!swiperRef.current.isBeginning) buttonSwiperPrevRef.current.classList.remove("hidden_arrow_swiper");
+    if (!swiperRef.current.isEnd) {setEndSwiperList((prev) => false);console.log("sss")};
+    if (!swiperRef.current.isBeginning) {setStartSwiperList((prev) => false); console.log("ddd")};
   });
 };
 
@@ -166,12 +169,12 @@ const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
       setIsAnimation(prev => !prev)
        gsap
         .timeline()
-        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", overflow: 'hidden', duration: .33,})
+        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", duration: .16,})
         .to(".circle", {
           rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
         })
         .to(`.point`, {rotate: rotationAngle})
-        .to(`.p_${activeEvents + 1}`, {width: 56, height: 56, background: "#fff", overflow: 'hidden', duration: .33, onComplete: () => {
+        .to(`.p_${activeEvents + 1}`, {width: 56, height: 56, background: "#fff", duration: .16, onComplete: () => {
           setIsAnimation(prev => !prev)
           }
         });
@@ -194,12 +197,12 @@ const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
       setIsAnimation(prev => !prev)
       gsap
         .timeline()
-        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", overflow: 'hidden', duration: .33})
+        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", overflow: 'hidden', duration: .16})
         .to(".circle", {
           rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
         })
         .to(`.point`, {rotate: rotationAngle})
-        .to(`.p_${activeEvents - 1}`, {width: 56, height: 56, background: "#fff", overflow: 'hidden', duration: .33, onComplete: () => {
+        .to(`.p_${activeEvents - 1}`, {width: 56, height: 56, background: "#fff", overflow: 'hidden', duration: .16, onComplete: () => {
           setIsAnimation(prev => !prev)
           }
         });
@@ -250,21 +253,20 @@ const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
           <StyledCardText>{event.description}</StyledCardText>
         </SwiperSlide>)}
       </Swiper>
-      <StyledButtonSwiper
-        className={isAnimation ? 'swiper_hidden' : 'hidden_arrow_swiper'}
+      {!startSwiperList && <StyledButtonSwiper
+        className={isAnimation ? 'swiper_hidden' : '' }
         ref={buttonSwiperPrevRef}
         onClick={slidePrev}
         $position={"left"} >
         <Arrow width={5} height={10} className={"color_arrow_swiper"}/>
-      </StyledButtonSwiper>
-      <StyledButtonSwiper
+      </StyledButtonSwiper>}
+      {!endSwiperList && <StyledButtonSwiper
         className={isAnimation ? 'swiper_hidden' : ''}
         ref={buttonSwiperNextRef}
         onClick={slideNext}
         $position={"right"} >
         <Arrow width={5} height={10} className={"color_arrow_swiper"} />
-      </StyledButtonSwiper>
+      </StyledButtonSwiper>}
     </StyledWrapperSwiper>
   )
-})
-export default MemoEventDetailsSlider
+};

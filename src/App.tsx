@@ -42,11 +42,6 @@ const GlobalStyle = createGlobalStyle`
     justify-content: start;
   }
 
-  .hidden_arrow_swiper {
-    opacity: 0;
-    pointer-events: none;
-  }
-
   .color_arrow_view {
     color: var(--arrow-view);
   }
