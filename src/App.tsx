@@ -25,6 +25,10 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
 
+  .swiper_hidden {
+    visibility: hidden;
+  }
+
   .swiper {
   width: 100%;
   height: 100%;
@@ -38,7 +42,7 @@ const GlobalStyle = createGlobalStyle`
     justify-content: start;
   }
 
-  .hidden {
+  .hidden_arrow_swiper {
     opacity: 0;
     pointer-events: none;
   }

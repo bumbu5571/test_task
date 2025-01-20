@@ -2,10 +2,11 @@ import { useState } from "react";
 import EventDetailsSlider from "./EventDetailsSlider/EventDetailsSlider";
 import Line from "./Line/Line";
 import TimelineHeader from "./TimelineHeader/TimelineHeader";
-import TimePeriodSelector from "./TimePeriodSelector/TimePeriodSelector";
 import styled from "styled-components";
 import { historicalEventsData } from "@/lib/data";
 import { HistoricalEventsArray } from "@/lib/types";
+import TimePeriodSelector from "./TimePeriodSelector/TimePeriodSelector";
+import EventsDate from "./EventsDate/EventsDate";
 
 const StyledHistoricalEvents = styled.div`
   width: 90em;
@@ -28,15 +29,14 @@ export default function HistoricalEvents() {
   const [activeEvents, setActiveEvents] = useState<number>(0);
   const [events, setEvents] = useState<HistoricalEventsArray>(sortByEvent(historicalEventsData[activeEvents]));
   
-  
-  const eventsLenght: number = historicalEventsData.length;
-  const startEvents: number = events[0].date;
-  const endEvents: number = events[events.length - 1].date;
- 
+  const dateStartEvents: number = events[0].date;
+  const dateEndEvents: number = events[events.length - 1].date;
+
   return (
     <StyledHistoricalEvents>
       <TimelineHeader />
-      <TimePeriodSelector events={events} startEvents={startEvents} endEvents={endEvents} />
+      <EventsDate dateStartEvents={dateStartEvents} dateEndEvents={dateEndEvents} />
+      <TimePeriodSelector eventsLenght={events.length} />
       <EventDetailsSlider
         events={events}
         setEvents={setEvents}
@@ -48,4 +48,4 @@ export default function HistoricalEvents() {
       <Line rotate={90} />
     </StyledHistoricalEvents>
   )
-}
+};

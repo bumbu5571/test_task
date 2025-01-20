@@ -9,12 +9,13 @@ import 'swiper/css/navigation';
 import { Navigation } from 'swiper/modules';
 
 import Arrow from '@/assets/arrow_right.svg'
-import { useRef, useState } from 'react';
+import { memo, useRef, useState } from 'react';
 import { Swiper as TypeSwiper } from 'swiper/types';
-import { IStyledComponentBase, Substitute } from 'styled-components/dist/types';
 import { historicalEventsData } from '@/lib/data';
+import gsap from 'gsap';
 
 const StyledCardHeader = styled.header`
+  font-family: "Bebas Neue";
   font-size: 25px;
   font-weight: 400;
   line-height: 30px;
@@ -110,7 +111,7 @@ type TypeEventDetailsSlider = {
   sortByEvent: (array: HistoricalEventsArray) => HistoricalEventsArray;
 };
 
-export default function EventDetailsSlider(
+const MemoEventDetailsSlider = memo ( function EventDetailsSlider(
   {
     events,
     setEvents,
@@ -122,8 +123,13 @@ export default function EventDetailsSlider(
   const swiperRef = useRef<TypeSwiper>(null);
   const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
   const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
+
   const [isEventsEnd, setIsEventsEnd] = useState<boolean>(false)
   const [isEventsStart, setIsEventsStart] = useState<boolean>(true)
+
+  const angle = 360 / events.length;
+
+  const [isAnimation, setIsAnimation] = useState(false);
 
   const slideNext = () => {
     swiperRef.current.slideNext();
@@ -136,26 +142,40 @@ export default function EventDetailsSlider(
   const handleSwiper = (swiper: TypeSwiper) => {
     swiperRef.current = swiper;
 
-    swiper.on("reachEnd", () => {
-      buttonSwiperNextRef.current.classList.add("hidden");
-    });
+  swiper.on("reachEnd", () => {
+    buttonSwiperNextRef.current.classList.add("hidden_arrow_swiper");
+  });
 
-    swiper.on("reachBeginning", () => {
-      buttonSwiperPrevRef.current.classList.add("hidden");
-    });
+  swiper.on("reachBeginning", () => {
+    buttonSwiperPrevRef.current.classList.add("hidden_arrow_swiper");
+  });
 
-    swiper.on("fromEdge", () => {
-      if (!swiperRef.current.isEnd) buttonSwiperNextRef.current.classList.remove("hidden");
+  swiper.on("fromEdge", () => {
+    if (!swiperRef.current.isEnd) buttonSwiperNextRef.current.classList.remove("hidden_arrow_swiper");
 
-      if (!swiperRef.current.isBeginning) buttonSwiperPrevRef.current.classList.remove("hidden");
-    });
-  };
+    if (!swiperRef.current.isBeginning) buttonSwiperPrevRef.current.classList.remove("hidden_arrow_swiper");
+  });
+};
 
   const handleClickNext = () => {
     if ( activeEvents === (events.length - 2) ) {
       setIsEventsEnd((prev) => !prev)
     }
-    if (activeEvents < 5) {
+    if (activeEvents < 5 && !isAnimation) {
+      const rotationAngle = (activeEvents + 1) * angle;
+      setIsAnimation(prev => !prev)
+       gsap
+        .timeline()
+        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", overflow: 'hidden', duration: .33,})
+        .to(".circle", {
+          rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
+        })
+        .to(`.point`, {rotate: rotationAngle})
+        .to(`.p_${activeEvents + 1}`, {width: 56, height: 56, background: "#fff", overflow: 'hidden', duration: .33, onComplete: () => {
+          setIsAnimation(prev => !prev)
+          }
+        });
+      
       if (isEventsStart) setIsEventsStart((prev) => !prev);
       const num = activeEvents + 1;
       setActiveEvents(num);
@@ -169,7 +189,21 @@ export default function EventDetailsSlider(
       setIsEventsStart((prev) => !prev)
     }
 
-    if (activeEvents > 0) {
+    if (activeEvents > 0 && !isAnimation) {
+      const rotationAngle = ((activeEvents + events.length - 1) * angle);
+      setIsAnimation(prev => !prev)
+      gsap
+        .timeline()
+        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", overflow: 'hidden', duration: .33})
+        .to(".circle", {
+          rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
+        })
+        .to(`.point`, {rotate: rotationAngle})
+        .to(`.p_${activeEvents - 1}`, {width: 56, height: 56, background: "#fff", overflow: 'hidden', duration: .33, onComplete: () => {
+          setIsAnimation(prev => !prev)
+          }
+        });
+
       if (isEventsEnd) setIsEventsEnd((prev) => !prev);
       const num = activeEvents - 1;
       setActiveEvents(num);
@@ -208,7 +242,7 @@ export default function EventDetailsSlider(
       grabCursor={true}
       centeredSlides={true}
       centeredSlidesBounds={true}
-      className="mySwiper"
+      className={isAnimation ? "swiper_hidden" : ''}
       > 
         {events.map((event) => 
         <SwiperSlide key={event.date} >
@@ -216,12 +250,21 @@ export default function EventDetailsSlider(
           <StyledCardText>{event.description}</StyledCardText>
         </SwiperSlide>)}
       </Swiper>
-      <StyledButtonSwiper className='hidden' ref={buttonSwiperPrevRef} onClick={slidePrev} $position={"left"} >
+      <StyledButtonSwiper
+        className={isAnimation ? 'swiper_hidden' : 'hidden_arrow_swiper'}
+        ref={buttonSwiperPrevRef}
+        onClick={slidePrev}
+        $position={"left"} >
         <Arrow width={5} height={10} className={"color_arrow_swiper"}/>
       </StyledButtonSwiper>
-      <StyledButtonSwiper ref={buttonSwiperNextRef} onClick={slideNext} $position={"right"} >
+      <StyledButtonSwiper
+        className={isAnimation ? 'swiper_hidden' : ''}
+        ref={buttonSwiperNextRef}
+        onClick={slideNext}
+        $position={"right"} >
         <Arrow width={5} height={10} className={"color_arrow_swiper"} />
       </StyledButtonSwiper>
     </StyledWrapperSwiper>
   )
-}
+})
+export default MemoEventDetailsSlider

@@ -1,14 +1,10 @@
-import { HistoricalEventsArray } from "@/lib/types";
 import { JSX, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 type TypeStyledPoint = {
-  rotate: number;
-  radius: number;
-}
-
-type TypeStyledDate = {
-  $position: "start" | "end";
+  $coordX: number;
+  $coordY: number;
+  $i: number;
 }
 
 const StyledCircle = styled.div`
@@ -24,52 +20,35 @@ const StyledCircle = styled.div`
 
 const StyledPoint = styled.div<TypeStyledPoint>`
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: var(--contrastText);
+  width: /* 6px; */ ${({$i}) => $i === 0 ? "56px" : "6px"};
+  height:/* 6px; */ ${({$i}) => $i === 0 ? "56px" : "6px"};
+  background: /* var(--contrastText); */${({$i}) => $i === 0 ? '#fff' : 'var(--contrastText)'};
+  border: 1px solid var(--contrastText);
   border-radius: 50%;
-  top: 50%;
-  left: 50%;
-  transform: 
-    translate(-50%, -50%)
-    rotate(${({ rotate }) => rotate}deg)
-    translate(${({ radius }) => radius}px, 0);
-  z-index: 5;
-`;
-
-const StyledEventsDate = styled.div`
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  display: flex;
+  top:  calc(50% + ${({  $coordY }) => (`${$coordY}px`)});
+  left: calc(50% + ${({ $coordX }) => (`${$coordX}px`)});
   transform: translate(-50%, -50%);
-  gap: 70px;
-`;
-
-const StyledDate = styled.div<TypeStyledDate>`
-  font-size: 200px;
-  font-weight: 700;
-  line-height: 160px;
-  letter-spacing: -.5px;
-  color: var(
-  ${({$position}) => ($position === "start" ? "--date-start" : "--date-end" )}
-  );
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  font-weight: 400;
+  line-height: 30px;
+  color: var(--arrow-view);
+  overflow: hidden;
 `;
 
 type TypeTimePeriodSelector = {
-  events: HistoricalEventsArray;
-  startEvents: number;
-  endEvents: number;
+  eventsLenght: number;
 };
 
-export default function TimePeriodSelector({events, startEvents, endEvents}: TypeTimePeriodSelector) {
-  const angle: number = 360 / events.length;
-  const points = useRef<JSX.Element[]>([]);
+ export default function TimePeriodSelector({eventsLenght}: TypeTimePeriodSelector) {
+
+  const angleStep = (2 * Math.PI) / eventsLenght;
+  const points: Array<JSX.Element> = [];
   const refStyledCircle = useRef<HTMLDivElement>(null);
   const [radiusCicle, setRadiusCicle] = useState<number>(0);
-
-  const [prevStartEvents,setPrevStartEvents] = useState(events[0].date);
-  const [prevEndEvents,setPrevEndEvents] = useState(events[events.length - 1].date);
   
   useEffect(() => {
     if(refStyledCircle.current) {
@@ -78,61 +57,25 @@ export default function TimePeriodSelector({events, startEvents, endEvents}: Typ
     }
   },[])
 
-  useEffect(() => {
-    let timeRef: NodeJS.Timeout | null = null;
-
-
-    const updateValue = () => {
-      const newStart = prevStartEvents;
-      const newEnd = prevEndEvents;
-
-
-        if (startEvents > newStart) {
-        setTimeout(() => setPrevStartEvents((prev) => prev + 1 ), 33);
-      }
-      else if(startEvents < newStart) {
-        setTimeout(() => setPrevStartEvents((prev) => prev - 1 ), 33);
-      }
-
-
-      if (endEvents > newEnd) {
-        setTimeout(() => setPrevEndEvents((prev) => prev + 1 ), 33);
-      }
-      else if(endEvents < newEnd) {
-        setTimeout(() => setPrevEndEvents((prev) => prev - 1 ), 33);
-      }
-     
-      if (timeRef) {
-        clearTimeout(timeRef);
-      }
-    }
-
-
-    updateValue();
-
-
-    return () => {
-      if (timeRef) clearTimeout(timeRef);
-    }
-
-
-  },[prevStartEvents,prevEndEvents,startEvents, endEvents])
-
-  points.current = events.map((_, i) => (
-    <StyledPoint key={i} rotate={i * angle} radius={radiusCicle} />
-  ));
+ for(let i = 0; i < eventsLenght; i += 1) {
+    const angle = (i - 1) * angleStep;
+    const x: number =  radiusCicle * Math.cos(angle);
+    const y: number =  radiusCicle * Math.sin(angle);
+    points.push(<StyledPoint 
+      key={i}
+      $i={i}
+      $coordX={x}
+      $coordY={y}
+      className={`point p_${i}`}
+      >{i+1}</StyledPoint>
+    )
+  };
 
   return (
     <>
-      <StyledCircle ref={refStyledCircle}>
-        {points.current}
-        <StyledEventsDate>
-          <StyledDate $position={"start"} className="start_date" >{prevStartEvents}</StyledDate>
-          <StyledDate $position={"end"} className="end_date">{prevEndEvents}</StyledDate>
-        </StyledEventsDate>
+      <StyledCircle className="circle" ref={refStyledCircle}>
+        {points}
       </StyledCircle>
     </>
-    
   )
-}
-
+};
