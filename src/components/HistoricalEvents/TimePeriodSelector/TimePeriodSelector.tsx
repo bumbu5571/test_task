@@ -1,7 +1,7 @@
 import { historicalEventsData } from "@/lib/data";
 import { HistoricalEventsArray } from "@/lib/types";
 import gsap from "gsap";
-import { EventHandler, JSX, useEffect, useRef, useState } from "react";
+import { JSX, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 type TypeStyledPoint = {
@@ -23,9 +23,9 @@ const StyledCircle = styled.div`
 
 const StyledPoint = styled.div<TypeStyledPoint>`
   position: absolute;
-  width: /* 6px; */ ${({$i}) => $i === 0 ? "56px" : "6px"};
-  height:/* 6px; */ ${({$i}) => $i === 0 ? "56px" : "6px"};
-  background: /* var(--contrastText); */${({$i}) => $i === 0 ? '#fff' : 'var(--contrastText)'};
+  width:  ${({$i}) => $i === 0 ? "56px" : "6px"};
+  height: ${({$i}) => $i === 0 ? "56px" : "6px"};
+  background: ${({$i}) => $i === 0 ? '#fff' : 'var(--contrastText)'};
   border: 1px solid var(--contrastText);
   border-radius: 50%;
   top:  calc(50% + ${({  $coordY }) => (`${$coordY}px`)});

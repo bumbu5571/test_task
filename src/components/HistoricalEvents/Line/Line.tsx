@@ -1,8 +1,15 @@
+import { useContext } from "react";
 import styled from "styled-components";
+import { ScreenContext } from "../Context/ScreenContext";
 
-export const StyledLine = styled.div<TypeLine>`
+type TypeStyledLine = {
+  rotate?: number;
+  $screenWidth: number;
+}
+
+export const StyledLine = styled.div<TypeStyledLine>`
   position: absolute;
-  top: 480px;
+  top: ${({$screenWidth}) => ($screenWidth > 320 ? '480px' : '280px')};
   width: 100%;
   height: 1px;
   background-color: var(--border-opacity);
@@ -15,7 +22,9 @@ type TypeLine = {
 }
 
 export default function Line({rotate = 0}: TypeLine) {
+  const screenWidth = useContext(ScreenContext);
+
   return (
-    <StyledLine rotate={rotate} />
+    <StyledLine rotate={rotate} $screenWidth={screenWidth} />
   )
 }

@@ -6,40 +6,54 @@ import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 
-import { Navigation } from 'swiper/modules';
+import { Navigation, Pagination } from 'swiper/modules';
 
 import Arrow from '@/assets/arrow_right.svg'
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { Swiper as TypeSwiper } from 'swiper/types';
 import { historicalEventsData } from '@/lib/data';
 import gsap from 'gsap';
+import { ScreenContext } from '../Context/ScreenContext';
 
-const StyledCardHeader = styled.header`
+type TypeStyledCardHeader = {
+  $screenWidth: number;
+};
+
+const StyledCardHeader = styled.header<TypeStyledCardHeader>`
   font-family: "Bebas Neue";
-  font-size: 25px;
+  font-size: ${({$screenWidth}) => ($screenWidth > 320 ? '25px' : '16px')};
   font-weight: 400;
-  line-height: 30px;
+  line-height: ${({$screenWidth}) => ($screenWidth > 320 ? '30px' : '19.2px')};
   color: var(--gradient-first)
 `;
 
-const StyledCardText = styled.p`
+type TypeStyledCardText= {
+  $screenWidth: number;
+};
+
+const StyledCardText = styled.p<TypeStyledCardText>`
   margin: 15px 0 0 0;
-  font-size: 20px;
+  font-size: ${({$screenWidth}) => ($screenWidth > 320 ? '20px' : '14px')};
   font-weight: 400;
-  line-height: 30px;
+  line-height: ${({$screenWidth}) => ($screenWidth > 320 ? '30px' : '20.3px')};
   color: var(--contrastText);
   white-space: collapse;
   overflow: hidden; 
 `;
 
-const StyledWrapperSwiper = styled.div`
+type TypeStyledWrapperSwiper = {
+  $screenWidth: number;
+}
+
+
+const StyledWrapperSwiper = styled.div<TypeStyledWrapperSwiper>`
   position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
   height: 100%;
-  margin-bottom: 104px;
+  margin: ${({$screenWidth}) => ($screenWidth > 320 ? '0 0 104px 0' : '77px 0 0px 20px')};
 `;
 
 const StyledButtonSwiper = styled.div<TypeStyledButtonSwiper>`
@@ -56,30 +70,43 @@ const StyledButtonSwiper = styled.div<TypeStyledButtonSwiper>`
   box-shadow: 0 0 15px 0 var(--arrow-swiper);
 `;
 
-const StyledEvents = styled.div`
+type TypeStyledEvents = {
+  $screenWidth: number;
+}
+
+const StyledEvents = styled.div<TypeStyledEvents>`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: end;
   position: absolute;
   left: 0;
-  top: -144px;
-  width: 120px;
-  height: 88px;
-  margin-left: 80px;
+  ${({$screenWidth}) => ($screenWidth > 320 ? 'top: -144px' : 'bottom: 0px')};
+  width: ${({$screenWidth}) => ($screenWidth > 320 ? '120px' : '58.33px')};
+  height: ${({$screenWidth}) => ($screenWidth > 320 ? '88px' : '49.67px')};
+  margin-left: ${({$screenWidth}) => ($screenWidth > 320 ? '80px' : '20px')};
+  ${({$screenWidth}) => ($screenWidth > 320 ? '' : 'margin-bottom: 13px')};
+  z-index: 5;
 `;
 
-const StyledWrapperButtonEvents = styled.div`
+type TypeStyledWrapperButtonEvents = {
+  $screenWidth: number;
+};
+
+const StyledWrapperButtonEvents = styled.div<TypeStyledWrapperButtonEvents>`
   display: flex;
-  gap: 20px;
+  gap: ${({$screenWidth}) => ($screenWidth > 320 ? '20px' : '8.33px')};
 `;
 
-const StyledButtonEvents = styled.div<TypeStyledButtonSwiper >`
-  ${({$position}) => $position === "left" ?
-    `left: 20px; transform: rotate(180deg)`
-    : `right:20px`};
-  width: 50px;
-  height: 50px;
+type TypeStyledButtonEvents = {
+  $position: string;
+  $screenWidth: number;
+};
+
+const StyledButtonEvents = styled.div<TypeStyledButtonEvents>`
+  ${({$position}) => $position === "left" ? `transform: rotate(180deg)` : ``};
+  width: ${({$screenWidth}) => ($screenWidth > 320 ? '50px' : '25px')};
+  height: ${({$screenWidth}) => ($screenWidth > 320 ? '50px' : '25px')};
   border-radius: 50%;
   border: 1px solid var(--arrow-hidden);
   display: flex;
@@ -99,7 +126,7 @@ const StyledTextEventsPosition = styled.p`
   align-self: self-start;
 `;
 
-interface TypeStyledButtonSwiper {
+type TypeStyledButtonSwiper = {
   $position: string;
 };
 
@@ -126,6 +153,7 @@ export default function EventDetailsSlider(
     angle
   }: TypeEventDetailsSlider
 ) {
+  const screenWidth = useContext(ScreenContext);
   const swiperRef = useRef<TypeSwiper>(null);
   const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
   const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
@@ -155,8 +183,8 @@ export default function EventDetailsSlider(
   });
 
   swiper.on("fromEdge", () => {
-    if (!swiperRef.current.isEnd) {setEndSwiperList((prev) => false);console.log("sss")};
-    if (!swiperRef.current.isBeginning) {setStartSwiperList((prev) => false); console.log("ddd")};
+    if (!swiperRef.current.isEnd) setEndSwiperList((prev) => false);
+    if (!swiperRef.current.isBeginning) setStartSwiperList((prev) => false);
   });
 };
 
@@ -164,21 +192,22 @@ export default function EventDetailsSlider(
     if ( activeEvents === (events.length - 2) ) {
       setIsEventsEnd((prev) => !prev)
     }
-    if (activeEvents < 5 && !isAnimation) {
-      const rotationAngle = (activeEvents + 1) * angle;
-      setIsAnimation(prev => !prev)
-       gsap
-        .timeline()
-        .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", duration: .16,})
-        .to(".circle", {
-          rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
-        })
-        .to(`.point`, {rotate: rotationAngle})
-        .to(`.p_${activeEvents + 1}`, {width: 56, height: 56, background: "#fff", duration: .16, onComplete: () => {
-          setIsAnimation(prev => !prev)
-          }
-        });
-      
+    if ( activeEvents < 5 && !isAnimation) {
+      if (screenWidth > 320) {
+        const rotationAngle = (activeEvents + 1) * angle;
+        setIsAnimation(prev => !prev)
+        gsap
+         .timeline()
+         .to(`.p_${activeEvents}`, {width: 6, height: 6, background: "#42567A", duration: .16,})
+         .to(".circle", {
+           rotation: `-${rotationAngle}`,duration:1, transformOrigin: "50% 50%"
+         })
+         .to(`.point`, {rotate: rotationAngle})
+         .to(`.p_${activeEvents + 1}`, {width: 56, height: 56, background: "#fff", duration: .16, onComplete: () => {
+           setIsAnimation(prev => !prev)
+           }
+          });
+        }
       if (isEventsStart) setIsEventsStart((prev) => !prev);
       const num = activeEvents + 1;
       setActiveEvents(num);
@@ -193,7 +222,8 @@ export default function EventDetailsSlider(
     }
 
     if (activeEvents > 0 && !isAnimation) {
-      const rotationAngle = ((activeEvents + events.length - 1) * angle);
+      if (screenWidth > 320) {
+        const rotationAngle = ((activeEvents + events.length - 1) * angle);
       setIsAnimation(prev => !prev)
       gsap
         .timeline()
@@ -206,7 +236,7 @@ export default function EventDetailsSlider(
           setIsAnimation(prev => !prev)
           }
         });
-
+      }
       if (isEventsEnd) setIsEventsEnd((prev) => !prev);
       const num = activeEvents - 1;
       setActiveEvents(num);
@@ -216,32 +246,37 @@ export default function EventDetailsSlider(
   };
 
   return (
-    <StyledWrapperSwiper>
-      <StyledEvents>
+    <StyledWrapperSwiper $screenWidth={screenWidth}>
+      <StyledEvents $screenWidth={screenWidth}>
         <StyledTextEventsPosition>{`0${activeEvents + 1}/0${events.length}`}</StyledTextEventsPosition>
-        <StyledWrapperButtonEvents>
+        <StyledWrapperButtonEvents $screenWidth={screenWidth}>
           <StyledButtonEvents
             onClick={handleClickPrev}
+            $screenWidth={screenWidth}
             $position={"left"}
             className={isEventsStart ?"color_border_hidden" : "color_border_view"} >
-              <Arrow width={6.25}
-              height={12.5}
+              <Arrow width={screenWidth > 320 ? 6.25 : 3.12}
+              height={screenWidth > 320 ? 12.5 : 6.25}
               className={isEventsStart ? "color_arrow_hidden": "color_arrow_view"} />
           </StyledButtonEvents>
           <StyledButtonEvents
             onClick={handleClickNext}
+            $screenWidth={screenWidth}
             $position={"right"}
             className={isEventsEnd ? "color_border_hidden" : "color_border_view"}>
-              <Arrow width={6.25} height={12.5} className={isEventsEnd ? "color_arrow_hidden" : "color_arrow_view"} />
+              <Arrow width={screenWidth > 320 ? 6.25 : 3.12}
+              height={screenWidth > 320 ? 12.5 : 6.25}
+              className={isEventsEnd ? "color_arrow_hidden" : "color_arrow_view"} />
           </StyledButtonEvents>
         </StyledWrapperButtonEvents>
       </StyledEvents>
       
       <Swiper
       onSwiper={handleSwiper}
-      modules={[Navigation]}
-      slidesPerView={3}
-      spaceBetween={80}
+      modules={[Navigation, Pagination]}
+      slidesPerView={screenWidth > 320 ? 3 : 1.5}
+      spaceBetween={screenWidth > 320 ? 80 : 25}
+      pagination={screenWidth > 320 ? false : {clickable: true}}
       grabCursor={true}
       centeredSlides={true}
       centeredSlidesBounds={true}
@@ -249,18 +284,18 @@ export default function EventDetailsSlider(
       > 
         {events.map((event) => 
         <SwiperSlide key={event.date} >
-          <StyledCardHeader>{event.date}</StyledCardHeader>
-          <StyledCardText>{event.description}</StyledCardText>
+          <StyledCardHeader $screenWidth={screenWidth}>{event.date}</StyledCardHeader>
+          <StyledCardText $screenWidth={screenWidth}>{event.description}</StyledCardText>
         </SwiperSlide>)}
       </Swiper>
-      {!startSwiperList && <StyledButtonSwiper
+      {screenWidth > 320 && !startSwiperList && <StyledButtonSwiper
         className={isAnimation ? 'swiper_hidden' : '' }
         ref={buttonSwiperPrevRef}
         onClick={slidePrev}
         $position={"left"} >
         <Arrow width={5} height={10} className={"color_arrow_swiper"}/>
       </StyledButtonSwiper>}
-      {!endSwiperList && <StyledButtonSwiper
+      {screenWidth > 320 && !endSwiperList && <StyledButtonSwiper
         className={isAnimation ? 'swiper_hidden' : ''}
         ref={buttonSwiperNextRef}
         onClick={slideNext}

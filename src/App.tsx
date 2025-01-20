@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import HistoricalEvents from "./components/HistoricalEvents/HistoricalEvents";
 import { createGlobalStyle } from 'styled-components';
+import { ScreenContext } from "./components/HistoricalEvents/Context/ScreenContext";
 
 const GlobalStyle = createGlobalStyle`
   :root {
@@ -60,13 +62,51 @@ const GlobalStyle = createGlobalStyle`
   .color_border_hidden {
     border: 1px solid var(--arrow-hidden);
   }
+
+  @media (max-width: 320px) {
+     .swiper {
+    margin: 0 ;
+    padding: 0 0 141px 0 ;
+    }
+
+    .swiper-slide {
+    height: 114px;
+  }
+
+    .swiper-slide-next, .swiper-slide-prev {
+      opacity: .5;
+    }
+
+    .swiper-pagination-bullet {
+      background: var(--arrow-hidden)
+    }
+    
+    .swiper-pagination-bullet-active {
+      background: var(--arrow-view)
+    }
+  }
 `
 
 export default function App() {
+  const [screenWidth, setScreenWidth] = useState(1920);
+
+    useEffect(() => {
+      const handleResize = (e: UIEvent) => {
+        const window = e.currentTarget as Window;
+        setScreenWidth(window.innerWidth);
+      }
+  
+      window.addEventListener('resize', handleResize);
+  
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }, []); 
+
   return (
-    <>
+    <ScreenContext.Provider value={screenWidth}>
       <GlobalStyle />
       <HistoricalEvents />
-    </>
+    </ScreenContext.Provider>
   )
 }

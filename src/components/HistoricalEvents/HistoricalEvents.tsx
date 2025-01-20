@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import EventDetailsSlider from "./EventDetailsSlider/EventDetailsSlider";
 import Line from "./Line/Line";
 import TimelineHeader from "./TimelineHeader/TimelineHeader";
@@ -7,9 +7,11 @@ import { historicalEventsData } from "@/lib/data";
 import { HistoricalEventsArray } from "@/lib/types";
 import TimePeriodSelector from "./TimePeriodSelector/TimePeriodSelector";
 import EventsDate from "./EventsDate/EventsDate";
+import { ScreenContext } from "./Context/ScreenContext";
 
 const StyledHistoricalEvents = styled.div`
-  width: 90em;
+  width: 100vw;
+  max-width: 1440px;
   position: relative;
   display: flex;
   flex-direction: column;
@@ -21,6 +23,8 @@ const StyledHistoricalEvents = styled.div`
 `;
 
 export default function HistoricalEvents() {
+  const screenWidth = useContext(ScreenContext);
+
   const sortByEvent = (array: HistoricalEventsArray): HistoricalEventsArray => {
     const newArray = [...array]
     return newArray.sort((a, b) => a.date - b.date)
@@ -39,7 +43,7 @@ export default function HistoricalEvents() {
     <StyledHistoricalEvents>
       <TimelineHeader />
       <EventsDate dateStartEvents={dateStartEvents} dateEndEvents={dateEndEvents} />
-      <TimePeriodSelector
+      {screenWidth > 320 ? <TimePeriodSelector
         eventsLength={events.length}
         isAnimation={isAnimation}
         setIsAnimation={setIsAnimation}
@@ -48,7 +52,7 @@ export default function HistoricalEvents() {
         setEvents={setEvents}
         sortByEvent={sortByEvent}
         angle={angle}
-        />
+        /> : null}
       <EventDetailsSlider
         events={events}
         setEvents={setEvents}
@@ -60,7 +64,7 @@ export default function HistoricalEvents() {
         angle={angle}
         />
       <Line />
-      <Line rotate={90} />
+      {screenWidth > 320 ? <Line rotate={90} /> : null}
     </StyledHistoricalEvents>
   )
 };

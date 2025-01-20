@@ -1,27 +1,32 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
+import { ScreenContext } from "../Context/ScreenContext";
 
-const StyledEventsDate = styled.div`
-  position: absolute;
-  top:  480px;
-  left: 50%;
+const StyledEventsDate = styled.div<TypeStyledEventsDate>`
+  position: ${({$screenWidth}) => ($screenWidth > 320 ? 'absolute' : 'static')};
+  ${({$screenWidth}) => ($screenWidth > 320 ? 'top: 480px;' : '')}
+  ${({$screenWidth}) => ($screenWidth > 320 ? 'left: 50%;' : '')}
   display: flex;
-  transform: translate(-50%, -50%);
-  gap: 70px;
+  ${({$screenWidth}) => ($screenWidth > 320 ? 'transform: translate(-50%, -50%);' : '')}
+  gap: ${({$screenWidth}) => ($screenWidth > 320 ? '70px' : '30px')};
 `;
 
 const StyledDate = styled.div<TypeStyledDate>`
-  font-size: 200px;
+  font-size: ${({$screenWidth}) => ($screenWidth > 320 ? '200px' : '56px')};
   font-weight: 700;
-  line-height: 160px;
+  line-height: ${({$screenWidth}) => ($screenWidth > 320 ? '160px' : '72.46px')};
   letter-spacing: -.5px;
   color: var(
   ${({$position}) => ($position === "start" ? "--date-start" : "--date-end" )}
   );
 `;
+type TypeStyledEventsDate = {
+  $screenWidth: number;
+};
 
 type TypeStyledDate = {
   $position: "start" | "end";
+  $screenWidth: number;
 };
 
 type TypeEventsDate = {
@@ -30,7 +35,7 @@ type TypeEventsDate = {
 };
 
 export default function EventsDate({dateStartEvents, dateEndEvents}: TypeEventsDate) {
-
+  const screenWidth = useContext(ScreenContext);
   const [dateStart, setDateStart] = useState<number>(dateStartEvents);
   const [dateEnd, setDateEnd] = useState<number>(dateEndEvents);
 
@@ -68,9 +73,9 @@ export default function EventsDate({dateStartEvents, dateEndEvents}: TypeEventsD
   },[dateStartEvents, dateEndEvents, dateStart, dateEnd])
 
   return (
-    <StyledEventsDate>
-          <StyledDate $position={"start"} className="start_date" >{dateStart}</StyledDate>
-          <StyledDate $position={"end"} className="end_date">{dateEnd}</StyledDate>
+    <StyledEventsDate $screenWidth={screenWidth}>
+          <StyledDate $screenWidth={screenWidth} $position={"start"} className="start_date" >{dateStart}</StyledDate>
+          <StyledDate $screenWidth={screenWidth} $position={"end"} className="end_date">{dateEnd}</StyledDate>
     </StyledEventsDate>
   )
 }
