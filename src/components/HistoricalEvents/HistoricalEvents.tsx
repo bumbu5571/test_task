@@ -24,7 +24,6 @@ const StyledHistoricalEvents = styled.div`
 
 export default function HistoricalEvents() {
   const screenWidth = useContext(ScreenContext);
-
   const sortByEvent = (array: HistoricalEventsArray): HistoricalEventsArray => {
     const newArray = [...array]
     return newArray.sort((a, b) => a.date - b.date)

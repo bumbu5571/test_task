@@ -6,10 +6,6 @@ type TypeStyledTimelineHeader = {
   $screenWidth: number;
 };
 
-type TypeStyledHeaderText = {
-  $screenWidth: number;
-};
-
 const StyledTimelineHeader = styled.div<TypeStyledTimelineHeader>`
   position: ${({$screenWidth}) => ($screenWidth > 320 ? 'absolute' : 'static')};
   display: ${({$screenWidth}) => ($screenWidth > 320 ? 'flex' : '')};
@@ -28,6 +24,9 @@ const StyledHeaderGradient = styled.div`
     var(--gradient-second)
   );
 `
+type TypeStyledHeaderText = {
+  $screenWidth: number;
+};
 
 const StyledHeaderText = styled.header<TypeStyledHeaderText>`
   font-size: ${({$screenWidth}) => ($screenWidth > 320 ? '56px' : '20px')};

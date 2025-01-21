@@ -2,6 +2,10 @@ import { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { ScreenContext } from "../Context/ScreenContext";
 
+type TypeStyledEventsDate = {
+  $screenWidth: number;
+};
+
 const StyledEventsDate = styled.div<TypeStyledEventsDate>`
   position: ${({$screenWidth}) => ($screenWidth > 320 ? 'absolute' : 'static')};
   ${({$screenWidth}) => ($screenWidth > 320 ? 'top: 480px;' : '')}
@@ -10,6 +14,11 @@ const StyledEventsDate = styled.div<TypeStyledEventsDate>`
   ${({$screenWidth}) => ($screenWidth > 320 ? 'transform: translate(-50%, -50%);' : '')}
   gap: ${({$screenWidth}) => ($screenWidth > 320 ? '70px' : '30px')};
 `;
+
+type TypeStyledDate = {
+  $position: "start" | "end";
+  $screenWidth: number;
+};
 
 const StyledDate = styled.div<TypeStyledDate>`
   font-size: ${({$screenWidth}) => ($screenWidth > 320 ? '200px' : '56px')};
@@ -20,14 +29,6 @@ const StyledDate = styled.div<TypeStyledDate>`
   ${({$position}) => ($position === "start" ? "--date-start" : "--date-end" )}
   );
 `;
-type TypeStyledEventsDate = {
-  $screenWidth: number;
-};
-
-type TypeStyledDate = {
-  $position: "start" | "end";
-  $screenWidth: number;
-};
 
 type TypeEventsDate = {
   dateStartEvents: number;

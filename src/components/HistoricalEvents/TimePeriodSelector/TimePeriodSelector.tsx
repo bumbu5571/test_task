@@ -4,12 +4,6 @@ import gsap from "gsap";
 import { JSX, useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
-type TypeStyledPoint = {
-  $coordX: number;
-  $coordY: number;
-  $i: number;
-}
-
 const StyledCircle = styled.div`
   position: relative;
   margin-top: 215px;
@@ -20,6 +14,12 @@ const StyledCircle = styled.div`
   border-radius: 50%;
   opacity: 100%;
 `;
+
+type TypeStyledPoint = {
+  $coordX: number;
+  $coordY: number;
+  $i: number;
+}
 
 const StyledPoint = styled.div<TypeStyledPoint>`
   position: absolute;

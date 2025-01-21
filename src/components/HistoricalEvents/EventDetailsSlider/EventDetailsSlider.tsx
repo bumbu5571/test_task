@@ -45,7 +45,6 @@ type TypeStyledWrapperSwiper = {
   $screenWidth: number;
 }
 
-
 const StyledWrapperSwiper = styled.div<TypeStyledWrapperSwiper>`
   position: relative;
   display: flex;
@@ -55,6 +54,10 @@ const StyledWrapperSwiper = styled.div<TypeStyledWrapperSwiper>`
   height: 100%;
   margin: ${({$screenWidth}) => ($screenWidth > 320 ? '0 0 104px 0' : '77px 0 0px 20px')};
 `;
+
+type TypeStyledButtonSwiper = {
+  $position: string;
+};
 
 const StyledButtonSwiper = styled.div<TypeStyledButtonSwiper>`
   position: absolute;
@@ -126,10 +129,6 @@ const StyledTextEventsPosition = styled.p`
   align-self: self-start;
 `;
 
-type TypeStyledButtonSwiper = {
-  $position: string;
-};
-
 type TypeEventDetailsSlider = {
   events: HistoricalEventsArray;
   setEvents: React.Dispatch<React.SetStateAction<HistoricalEventsArray>>;
@@ -150,10 +149,11 @@ export default function EventDetailsSlider(
     sortByEvent,
     isAnimation,
     setIsAnimation,
-    angle
+    angle,
   }: TypeEventDetailsSlider
 ) {
   const screenWidth = useContext(ScreenContext);
+
   const swiperRef = useRef<TypeSwiper>(null);
   const buttonSwiperNextRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
   const buttonSwiperPrevRef = useRef<React.ElementRef<typeof StyledButtonSwiper>>(null);
