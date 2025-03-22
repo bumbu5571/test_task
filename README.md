@@ -6,7 +6,6 @@
 <a href="https://bumbu5571.github.io/test_task/">
     <p align="center" width="100%">
         <img src="readme_images/testTaskOnly0.gif" alt="Демонстрация Test task (полноэкранный вид)" border="0" width='400px' />
-        <img src="readme_images/testTaskOnly1.gif" alt="Демонстрация Test task (мобильный вид)" border="0" width='400px'/>
     </p>
 </a>
 
